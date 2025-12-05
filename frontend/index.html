@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sistema de Cadastro</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Sistema de Cadastro</h1>
+        <div id="auth-controls">
+          <span id="welcome-message" style="display: none;">Bem-vindo, <strong id="logged-in-user"></strong>!</span>
+          <button id="logout-btn" class="btn-delete" style="display: none;">Logout</button>
+          <button id="show-login-btn" class="btn-add" style="display: block;">Login</button>
+        </div>
+      </header>
+
+      <!-- Tela de Login -->
+      <div id="login-section" style="display: block;">
+        <h2>Login</h2>
+        <form id="login-form">
+          <input type="text" id="login-usuario" placeholder="Usuário" required />
+          <input type="password" id="login-senha" placeholder="Senha" required />
+          <button type="submit" class="btn-add">Entrar</button>
+        </form>
+      </div>
+
+      <!-- Conteúdo principal (escondido até login) -->
+      <div id="main-content" style="display: none;">
+        <hr />
+        <h2>Cadastro de Usuários (Apenas Administrador)</h2>
+        <form id="usuario-form">
+          <input type="text" id="usuario-nome" placeholder="Nome de Usuário" required />
+          <input type="password" id="usuario-senha" placeholder="Senha" required />
+          <button type="submit" class="btn-add">Adicionar Usuário</button>
+        </form>
+        <ul id="usuarios-lista" class="lista"></ul>
+        <hr />
+
+        <h1>Cadastro de Clientes</h1>
+        <form id="cliente-form">
+          <input type="text" id="nome" placeholder="Nome" required />
+          <input type="text" id="sobrenome" placeholder="Sobrenome" required />
+          <input type="email" id="email" placeholder="Email" required />
+          <input type="number" id="idade" placeholder="Idade" required />
+          <button type="submit" class="btn-add">Adicionar Cliente</button>
+        </form>
+        <input type="text" id="cliente-search" placeholder="Buscar cliente..." />
+        <ul id="clientes-lista" class="lista"></ul>
+        <hr />
+
+        <h1>Cadastro de Produtos </h1>
+        <form id="produto-form">
+          <input type="text" id="nome-produto" placeholder="Nome do produto" required />
+          <input type="text" id="descricao-produto" placeholder="Descrição do Produto" required />
+          <input type="number" id="preco" placeholder="Preço" step="0.01" required />
+          <input type="datetime-local" id="data-atualizado" placeholder="Data de Atualização" required />
+          <button type="submit" class="btn-add">Adicionar Produto</button>
+        </form>
+        <input type="text" id="produto-search" placeholder="Buscar produto..." />
+        <ul id="produtos-lista" class="lista"></ul>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
