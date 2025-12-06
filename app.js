@@ -3,35 +3,42 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const helmet = require('helmet');
 
-const indexRouter = require('./routes/index');
-const loginRouter = require('./routes/loginRoutes');       // ✅ corrigido nome
-const logoutRouter = require('./routes/logoutRoutes');     // ✅ corrigido nome
-const clientesRoutes = require('./routes/clientesRoutes'); // ✅ corrigido nome
-const produtosRoutes = require('./routes/produtosRoutes'); // ✅ corrigido nome
-const usuariosRoutes = require('./routes/usuariosRoutes'); // ✅ adicionado
+const authMiddleware = require('./middlewares/authMiddleware');
+
+const indexRouter = require('./routes/index'); // rota padrão (pode ser uma rota simples)
+const loginRouter = require('./routes/loginRoutes');
+const logoutRouter = require('./routes/logoutRoutes'); // opcional: implementar logout que usa tokenService
+const clientesRoutes = require('./routes/clientesRoutes');
+const produtosRoutes = require('./routes/produtosRoutes');
+const usuariosRoutes = require('./routes/usuariosRoutes');
 
 const app = express();
 
-// Middlewares
+// Segurança básica e parsers
+app.use(helmet());
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors());
 
-// 🔐 Rotas protegidas e públicas
-app.use('/clientes', clientesRoutes);      // requer JWT
-app.use('/produtos', produtosRoutes);      // público
-app.use('/usuarios', usuariosRoutes);      // criar e listar usuários
-app.use('/login', loginRouter);            // autenticação
-app.use('/logout', logoutRouter);          // invalida token
-app.use('/', indexRouter);                 // rota raiz
+// Rotas públicas
+app.use('/', indexRouter);
+app.use('/login', loginRouter);
+app.use('/logout', logoutRouter);
+app.use('/produtos', produtosRoutes);
+app.use('/usuarios', usuariosRoutes);
 
-// 🔔 fallback (opcional)
+// Rotas PROTEGIDAS: todas rotas a seguir usarão authMiddleware
+// Aqui aplicamos authMiddleware somente para o path /clientes
+app.use('/clientes', authMiddleware, clientesRoutes);
+
+// Fallback 404
 app.use('*', (req, res) => {
-  res.status(404).json({ error: 'Rota não encontrada' });
+res.status(404).json({ error: 'Rota não encontrada' });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
+console.log(`✅ Servidor rodando em http://localhost:${PORT}`);
 });

@@ -1,46 +1,59 @@
 // services/produtosService.js
-const db = require('../configs/db'); // Agora 'db' é o seu pool de conexões
+// Service responsável pela comunicação com o banco de dados (camada de acesso a dados)
 
-// 📌 Buscar todos os produtos
+const db = require('../configs/db'); // Pool de conexões MySQL
+
+// 📌 Buscar TODOS os produtos
 async function getProdutos() {
-    // Usar 'db' (o pool) diretamente para executar a query
-    const [rows] = await db.execute('SELECT * FROM produtos'); // <-- LINHA CORRIGIDA
+    // Retorna lista completa
+    const [rows] = await db.execute('SELECT * FROM produtos');
     return rows;
 }
 
-// 📌 Buscar um produto por ID
+// 📌 Buscar produto por ID
 async function getProdutoById(id) {
     const [rows] = await db.execute(
         'SELECT * FROM produtos WHERE id = ?',
-        [id],
+        [id]
     );
-    return rows[0];
+
+    // Caso não encontre, retorna null (padrão mais seguro)
+    return rows.length > 0 ? rows[0] : null;
 }
 
-// 📌 Adicionar um novo produto
+// 📌 Criar novo produto
 async function addProduto({ nome, descricao, preco, data_atualizado }) {
-    const [result] = await db.execute( // <-- LINHA CORRIGIDA
-        'INSERT INTO produtos (nome, descricao, preco, data_atualizado) VALUES (?, ?, ?, ?)',
-        [nome, descricao, preco, data_atualizado],
+    const [result] = await db.execute(
+        `INSERT INTO produtos (nome, descricao, preco, data_atualizado)
+         VALUES (?, ?, ?, ?)`,
+        [nome, descricao, preco, data_atualizado]
     );
+
+    // Retorna o ID gerado
     return result.insertId;
 }
 
-// 📌 Atualizar um produto
+// 📌 Atualizar produto existente
 async function updateProduto(id, { nome, descricao, preco, data_atualizado }) {
-    const [result] = await db.execute( // <-- LINHA CORRIGIDA
-        'UPDATE produtos SET nome = ?, descricao = ?, preco = ?, data_atualizado = ? WHERE id = ?',
-        [nome, descricao, preco, data_atualizado, id],
+    const [result] = await db.execute(
+        `UPDATE produtos 
+         SET nome = ?, descricao = ?, preco = ?, data_atualizado = ?
+         WHERE id = ?`,
+        [nome, descricao, preco, data_atualizado, id]
     );
+
+    // Retorna quantas linhas foram afetadas (0 = não encontrado)
     return result.affectedRows;
 }
 
-// 📌 Deletar um produto
+// 📌 Deletar produto
 async function deleteProduto(id) {
-    const [result] = await db.execute( // <-- LINHA CORRIGIDA
+    const [result] = await db.execute(
         'DELETE FROM produtos WHERE id = ?',
-        [id],
+        [id]
     );
+
+    // Retorna 1 se deletou, 0 se o ID não existe
     return result.affectedRows;
 }
 

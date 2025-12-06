@@ -1,23 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const clientesController = require('../controllers/clientesController');
+const { cacheMiddleware } = require('../middlewares/cache'); // garante que exista
 
-// Importa as funções do controller
-const {
-  getClientes,
-  addCliente,
-  updateCliente,
-  deleteCliente
-} = require('../controllers/clientesController');
-
-// Importa o middleware de cache
-const { cacheMiddleware } = require('../middlewares/cache');
-
-// ✅ Rota GET com cache (mostrará mensagens no terminal)
-router.get('/', cacheMiddleware, getClientes);
-
-// As demais rotas sem cache
-router.post('/', addCliente);
-router.put('/:id', updateCliente);
-router.delete('/:id', deleteCliente);
+router.get('/', cacheMiddleware, clientesController.getClientes);
+router.get('/:id', clientesController.getClienteById);
+router.post('/', clientesController.addCliente);
+router.put('/:id', clientesController.updateCliente);
+router.delete('/:id', clientesController.deleteCliente);
 
 module.exports = router;
